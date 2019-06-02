@@ -6,17 +6,27 @@
 #define GRAPH_BRIDGE_GRAPH_H
 
 #include <string>
-#include <vector>
+#include <list>
 
 using namespace std;
 
 class graph {
 private:
-    vector<int> *adj_list;
+    list<int> *adj_list;
     int v_num, e_num;
     string data_file;
+
+    int *bfs(int s, int *color);
+
+    int get_next_start(const int *color);
 public:
-    graph(string &filename);
+    explicit graph(string &filename);
+
+    ~graph();
+
+    int get_connected_num();
+
+    vector<int *> benchmark(); // 基准算法
 };
 
 

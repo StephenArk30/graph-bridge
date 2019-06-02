@@ -28,6 +28,8 @@ private:
      vector<set*> sets;
 public:
     unionfind();
+
+    ~unionfind();
     void makeset(int x);
     set* findset(node *x);
     bool unionset(node *x, node *y);

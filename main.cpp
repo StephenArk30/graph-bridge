@@ -1,6 +1,12 @@
 #include <iostream>
+#include "graph.h"
+
+using namespace std;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    string mediumG = "../test_data/mediumDG.txt";
+    graph g(mediumG);
+
+
     return 0;
 }

@@ -33,3 +33,15 @@ bool unionfind::unionset(node *x, node *y) {
     set1->tail = set2->tail;
     return true;
 }
+
+unionfind::~unionfind() {
+    vector<set *>::iterator iter;
+    for (iter = sets.begin(); iter != sets.end(); iter++) {
+        node *nd, *next = nullptr;
+        for (nd = (*iter)->head; nd->next != nullptr; nd = next) {
+            next = nd->next;
+            delete (nd);
+        }
+        delete (*iter);
+    }
+}
