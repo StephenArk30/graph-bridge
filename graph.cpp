@@ -38,6 +38,7 @@ int *graph::bfs(int s, int *color) {
         current_node = q.front();
         q.pop();
         for (iter = adj_list[current_node].begin(); iter != adj_list[current_node].end(); ++iter) {
+            if (*iter < 0) continue;
             if (color[*iter] == 0) {
                 color[*iter] = 1;
                 q.push(*iter);
@@ -75,7 +76,6 @@ int graph::get_next_start(const int *color) {
 
 vector<int *> graph::benchmark() {
     list<int>::iterator iter, jter;
-    list<int>::iterator cter, dter;
     list<int> *current_adj, *delete_adj;
     int delete_node;
     int connected_num = get_connected_num();
@@ -91,29 +91,28 @@ vector<int *> graph::benchmark() {
             delete_adj = &adj_list[delete_node];
             for (jter = delete_adj->begin(); jter != delete_adj->end(); ++jter) {
                 if (*jter == current_node) {
-                    dter = jter;
-                    dter--;
-                    delete_adj->erase(jter);
+                    *jter = -1;
                     break;
                 }
             }
-            cter = iter;
-            cter--;
-            current_adj->erase(iter);
+            *iter = -1;
             // judge if is bridge
             temp_connected_num = get_connected_num();
+            cout << current_node << ' ' << delete_node;
             if (connected_num < temp_connected_num) {
                 int *e = new int[2];
                 e[0] = current_node;
                 e[1] = delete_node;
                 bridge.push_back(e);
+                cout << " *";
             }
+            cout << '\n';
             // restore edge
-            current_adj->insert(cter, current_node);
-            delete_adj->insert(dter, delete_node);
+            *iter = delete_node;
+            *jter = current_node;
         }
     }
-    print_bridge(bridge);
+//    print_bridge(bridge);
     return bridge;
 }
 
