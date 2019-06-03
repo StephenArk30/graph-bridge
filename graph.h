@@ -19,6 +19,7 @@ private:
     int *bfs(int s, int *color);
 
     int get_next_start(const int *color);
+    void print_bridge(vector<int *>bridge);
 public:
     explicit graph(string &filename);
 
@@ -27,6 +28,7 @@ public:
     int get_connected_num();
 
     vector<int *> benchmark(); // 基准算法
+    void destroy_bridge(vector<int *>bridge);
 };
 
 

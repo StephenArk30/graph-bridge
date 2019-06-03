@@ -4,6 +4,8 @@
 
 #include <fstream>
 #include <queue>
+#include <iostream>
+#include <cstring>
 #include "graph.h"
 
 // create adjacency list
@@ -35,7 +37,7 @@ int *graph::bfs(int s, int *color) {
     while (!q.empty()) {
         current_node = q.front();
         q.pop();
-        for (iter = adj_list[current_node].begin(); iter != adj_list[current_node].end(); iter++) {
+        for (iter = adj_list[current_node].begin(); iter != adj_list[current_node].end(); ++iter) {
             if (color[*iter] == 0) {
                 color[*iter] = 1;
                 q.push(*iter);
@@ -54,6 +56,7 @@ graph::~graph() {
 int graph::get_connected_num() {
     int connected_num = 0;
     int *color = new int[v_num];
+    memset(color, 0, v_num * sizeof(int));
     int s = 0;
     while (s >= 0) {
         ++connected_num;
@@ -72,26 +75,31 @@ int graph::get_next_start(const int *color) {
 
 vector<int *> graph::benchmark() {
     list<int>::iterator iter, jter;
-    list<int> current_adj, delete_adj;
+    list<int>::iterator cter, dter;
+    list<int> *current_adj, *delete_adj;
     int delete_node;
     int connected_num = get_connected_num();
     int temp_connected_num;
     vector<int *> bridge;
 
     for (int current_node = 0; current_node < v_num; ++current_node) {
-        current_adj = adj_list[current_node];
-        for (iter = current_adj.begin(); iter != current_adj.end(); iter++) {
+        current_adj = &adj_list[current_node];
+        for (iter = current_adj->begin(); iter != current_adj->end(); ++iter) {
             delete_node = *iter;
             if (delete_node < current_node) continue; // 保证不会删除重复的边
             // delete edge
-            delete_adj = adj_list[delete_node];
-            for (jter = delete_adj.begin(); jter != delete_adj.end(); jter++) {
+            delete_adj = &adj_list[delete_node];
+            for (jter = delete_adj->begin(); jter != delete_adj->end(); ++jter) {
                 if (*jter == current_node) {
-                    delete_adj.erase(jter);
+                    dter = jter;
+                    dter--;
+                    delete_adj->erase(jter);
                     break;
                 }
             }
-            current_adj.erase(iter);
+            cter = iter;
+            cter--;
+            current_adj->erase(iter);
             // judge if is bridge
             temp_connected_num = get_connected_num();
             if (connected_num < temp_connected_num) {
@@ -101,8 +109,22 @@ vector<int *> graph::benchmark() {
                 bridge.push_back(e);
             }
             // restore edge
-            current_adj.insert(iter, current_node);
-            delete_adj.insert(jter, delete_node);
+            current_adj->insert(cter, current_node);
+            delete_adj->insert(dter, delete_node);
         }
     }
+    print_bridge(bridge);
+    return bridge;
+}
+
+void graph::destroy_bridge(vector<int *> bridge) {
+    vector<int *>::iterator iter;
+    for (iter = bridge.begin(); iter != bridge.end(); ++iter)
+        delete[] *iter;
+}
+
+void graph::print_bridge(vector<int *> bridge) {
+    vector<int *>::iterator iter;
+    for (iter = bridge.begin(); iter != bridge.end(); ++iter)
+        cout << (*iter)[0] << ' ' << (*iter)[1] << '\n';
 }
