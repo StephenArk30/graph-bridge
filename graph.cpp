@@ -16,7 +16,7 @@ graph::graph(string &filename) : data_file(filename) {
     file >> v_num >> e_num;
     adj_list = new list<int>[v_num];
     int temp_node1, temp_node2;
-    for (int i = 0; i < v_num; ++i) {
+    for (int i = 0; i < e_num; ++i) {
         file >> temp_node1 >> temp_node2;
         adj_list[temp_node1].push_back(temp_node2);
         adj_list[temp_node2].push_back(temp_node1);

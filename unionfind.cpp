@@ -4,11 +4,18 @@
 
 #include "unionfind.h"
 
-unionfind::unionfind() {
+unionfind::unionfind(const graph &g) {
     sets.clear();
+    nodes = new node *[g.v_num];
+    int v;
+    for (v = 0; v < g.v_num; v++)
+        nodes[v] = makeset(v);
+    for (v = 0; v < g.v_num; v++)
+        for (auto e :g.adj_list[v])
+            unionset(nodes[v], nodes[e]);
 }
 
-void unionfind::makeset(int x) {
+node *unionfind::makeset(int x) {
     node *temp_node = new node{
         x, nullptr, nullptr
     };
@@ -17,6 +24,7 @@ void unionfind::makeset(int x) {
     };
     temp_node->head = temp_set;
     sets.push_back(temp_set);
+    return temp_node;
 }
 
 set *unionfind::findset(node *x) {
@@ -28,9 +36,15 @@ bool unionfind::unionset(node *x, node *y) {
     set *set2 = findset(y);
     if (set1 == nullptr || set2 == nullptr)
         return false;
+    if (set1 == set2)
+        return true;
     (set1->tail)->next = set2->head;
-    set2->head = set1->head;
+//    set2->head = set1->head;
+    // yet another way to adjust head
+    for (node *i = set2->head; i != nullptr; i = i->next)
+        i->head = set1;
     set1->tail = set2->tail;
+    delete (set2);
     return true;
 }
 
