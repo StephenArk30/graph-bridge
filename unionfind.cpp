@@ -4,15 +4,17 @@
 
 #include "unionfind.h"
 
-unionfind::unionfind(const graph &g) {
+unionfind::unionfind(const graph &g) : setnum(0) {
     sets.clear();
     nodes = new node *[g.v_num];
     int v;
     for (v = 0; v < g.v_num; v++)
         nodes[v] = makeset(v);
+    setnum = v;
     for (v = 0; v < g.v_num; v++)
         for (auto e :g.adj_list[v])
-            unionset(nodes[v], nodes[e]);
+            if (nodes[e]->data > nodes[v]->data)
+                if (unionset(nodes[v], nodes[e])) setnum--;
 }
 
 node *unionfind::makeset(int x) {
@@ -36,20 +38,18 @@ bool unionfind::unionset(node *x, node *y) {
     set *set2 = findset(y);
     if (set1 == nullptr || set2 == nullptr)
         return false;
-    if (set1 == set2)
-        return true;
+    if (set1->head == set2->head)
+        return false;
     (set1->tail)->next = set2->head;
-//    set2->head = set1->head;
-    // yet another way to adjust head
     for (node *i = set2->head; i != nullptr; i = i->next)
         i->head = set1;
     set1->tail = set2->tail;
-    delete (set2);
+    set2 = nullptr;
     return true;
 }
 
 unionfind::~unionfind() {
-    vector<set *>::iterator iter;
+    list<set *>::iterator iter;
     for (iter = sets.begin(); iter != sets.end(); iter++) {
         node *nd, *next = nullptr;
         for (nd = (*iter)->head; nd->next != nullptr; nd = next) {

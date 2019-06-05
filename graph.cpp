@@ -28,7 +28,7 @@ graph::graph(string &filename) : data_file(filename) {
  * param: s: start node
  * return node color array
  * */
-int *graph::bfs(int s, int *color) {
+void graph::bfs(int s, int *color) {
     color[s] = 1;
     queue<int> q;
     q.push(s);
@@ -46,7 +46,6 @@ int *graph::bfs(int s, int *color) {
         }
         color[current_node] = 2;
     }
-    return color;
 }
 
 graph::~graph() {
@@ -74,13 +73,13 @@ int graph::get_next_start(const int *color) {
     return -1;
 }
 
-vector<int *> graph::benchmark() {
+list<int *> graph::benchmark() {
     list<int>::iterator iter, jter;
     list<int> *current_adj, *delete_adj;
     int delete_node;
     int connected_num = get_connected_num();
     int temp_connected_num;
-    vector<int *> bridge;
+    list<int *> bridge;
 
     for (int current_node = 0; current_node < v_num; ++current_node) {
         current_adj = &adj_list[current_node];
@@ -98,15 +97,13 @@ vector<int *> graph::benchmark() {
             *iter = -1;
             // judge if is bridge
             temp_connected_num = get_connected_num();
-            cout << current_node << ' ' << delete_node;
             if (connected_num < temp_connected_num) {
                 int *e = new int[2];
                 e[0] = current_node;
                 e[1] = delete_node;
                 bridge.push_back(e);
-                cout << " *";
+                cout << current_node << ' ' << delete_node << " *" << '\n';
             }
-            cout << '\n';
             // restore edge
             *iter = delete_node;
             *jter = current_node;
@@ -116,14 +113,14 @@ vector<int *> graph::benchmark() {
     return bridge;
 }
 
-void graph::destroy_bridge(vector<int *> bridge) {
-    vector<int *>::iterator iter;
+void graph::destroy_bridge(list<int *> bridge) {
+    list<int *>::iterator iter;
     for (iter = bridge.begin(); iter != bridge.end(); ++iter)
         delete[] *iter;
 }
 
-void graph::print_bridge(vector<int *> bridge) {
-    vector<int *>::iterator iter;
+void graph::print_bridge(list<int *> bridge) {
+    list<int *>::iterator iter;
     for (iter = bridge.begin(); iter != bridge.end(); ++iter)
         cout << (*iter)[0] << ' ' << (*iter)[1] << '\n';
 }

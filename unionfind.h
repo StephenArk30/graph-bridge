@@ -5,7 +5,7 @@
 #ifndef GRAPH_BRIDGE_UNIONFIND_H
 #define GRAPH_BRIDGE_UNIONFIND_H
 
-#include <vector>
+#include <list>
 #include "graph.h"
 
 using namespace std;
@@ -26,15 +26,18 @@ struct set {
 
 class unionfind {
 private:
-     vector<set*> sets;
+    list<set *> sets;
     node **nodes;
+    int setnum;
 public:
-    unionfind(const graph &g);
+    explicit unionfind(const graph &g);
     ~unionfind();
 
     node *makeset(int x);
     set* findset(node *x);
     bool unionset(node *x, node *y);
+
+    int getsetnum() { return setnum; }
 };
 
 

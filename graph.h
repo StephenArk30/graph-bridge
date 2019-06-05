@@ -17,10 +17,11 @@ private:
     int v_num, e_num;
     string data_file;
 
-    int *bfs(int s, int *color);
+    void bfs(int s, int *color);
 
     int get_next_start(const int *color);
-    void print_bridge(vector<int *>bridge);
+
+    void print_bridge(list<int *> bridge);
 public:
     explicit graph(string &filename);
 
@@ -28,8 +29,8 @@ public:
 
     int get_connected_num();
 
-    vector<int *> benchmark(); // 基准算法
-    void destroy_bridge(vector<int *>bridge);
+    list<int *> benchmark(); // 基准算法
+    void destroy_bridge(list<int *> bridge);
 };
 
 
