@@ -13,8 +13,6 @@ int main() {
     cout << "adjacency list created\n";
     list<int *> mbridge = mg.benchmark();
     mg.destroy_bridge(mbridge);
-    unionfind uf(mg);
-    cout << uf.getsetnum() << '\n';
 
     /*string largeG = "../test_data/largeG.txt";
     cout << "reading graph from " << largeG << '\n';

@@ -20,8 +20,6 @@ private:
     void bfs(int s, int *color);
 
     int get_next_start(const int *color);
-
-    void print_bridge(list<int *> bridge);
 public:
     explicit graph(string &filename);
 

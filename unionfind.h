@@ -29,13 +29,25 @@ private:
     list<set *> sets;
     node **nodes;
     int setnum;
+    int v_num, e_num;
+    node ***edge;
+
+    int bridge_num;
+    bool *is_bridge;
+
+    void makeset(node *x);
+
+    void bfsunion(graph &g, int s, int *color);
 public:
-    explicit unionfind(const graph &g);
+    explicit unionfind(const string &file_path);
     ~unionfind();
 
     node *makeset(int x);
     set* findset(node *x);
-    bool unionset(node *x, node *y);
+
+    bool unionset(node *x, node *y, int e);
+
+    void benchmark(graph &g); // 暴力算法
 
     int getsetnum() { return setnum; }
 };

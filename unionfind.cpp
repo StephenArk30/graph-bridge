@@ -2,19 +2,38 @@
 // Created by Stephen Ark on 5/31/2019.
 //
 
+#include <fstream>
+#include <cstring>
+#include <queue>
 #include "unionfind.h"
 
-unionfind::unionfind(const graph &g) : setnum(0) {
+unionfind::unionfind(const string &file_path) : setnum(0) {
     sets.clear();
-    nodes = new node *[g.v_num];
-    int v;
-    for (v = 0; v < g.v_num; v++)
-        nodes[v] = makeset(v);
-    setnum = v;
-    for (v = 0; v < g.v_num; v++)
-        for (auto e :g.adj_list[v])
-            if (nodes[e]->data > nodes[v]->data)
-                if (unionset(nodes[v], nodes[e])) setnum--;
+    nodes = new node *[v_num];
+    is_bridge = new bool[e_num];
+    memset(is_bridge, true, sizeof(bool) * e_num);
+    bridge_num = 0;
+
+    ifstream file;
+    file.open(file_path);
+    v_num = e_num = 0;
+    file >> v_num >> e_num;
+    edge = new node **[e_num];
+    int i, j, k;
+    for (i = 0; i < e_num; ++i) {
+        edge[i] = new node *[2];
+        file >> j >> k;
+        edge[i][0] = nodes[j];
+        edge[i][1] = nodes[k];
+    }
+
+    for (i = 0; i < v_num; i++)
+        nodes[i] = makeset(i);
+    setnum = i;
+    bridge_num = e_num;
+    for (i = 0; i < e_num; i++)
+        if (edge[i][0]->data > edge[i][1]->data)
+            if (unionset(edge[i][0], edge[i][1], i)) setnum--;
 }
 
 node *unionfind::makeset(int x) {
@@ -29,17 +48,21 @@ node *unionfind::makeset(int x) {
     return temp_node;
 }
 
+
 set *unionfind::findset(node *x) {
     return x->head;
 }
 
-bool unionfind::unionset(node *x, node *y) {
+bool unionfind::unionset(node *x, node *y, int e) {
     set *set1 = findset(x);
     set *set2 = findset(y);
     if (set1 == nullptr || set2 == nullptr)
         return false;
-    if (set1->head == set2->head)
+    if (set1->head == set2->head && e >= 0) {
+        is_bridge[e] = false;
+        bridge_num--;
         return false;
+    }
     (set1->tail)->next = set2->head;
     for (node *i = set2->head; i != nullptr; i = i->next)
         i->head = set1;
@@ -57,5 +80,51 @@ unionfind::~unionfind() {
             delete (nd);
         }
         delete (*iter);
+    }
+}
+
+void unionfind::benchmark(graph &g) {
+    node *p;
+    node *node1, *node2;
+    for (int i = 0; i < e_num; ++i) {
+        if (!is_bridge[i]) continue;
+        node1 = edge[i][0];
+        node2 = edge[i][1];
+        int *color = new int[v_num];
+        memset(color, 2, sizeof(int) * v_num);
+        for (p = findset(node1)->head; p != nullptr; p = p->next) {
+            makeset(p);
+            color[p->data] = 0;
+        }
+        bfsunion(g, node1->data, color);
+        if (findset(node1) == findset(node2)) is_bridge[i] = true;
+    }
+}
+
+void unionfind::makeset(node *x) {
+    set *temp_set = new set{
+            x, x
+    };
+    x->head = temp_set;
+    sets.push_back(temp_set);
+}
+
+void unionfind::bfsunion(graph &g, int s, int *color) {
+    queue<int> q;
+    q.push(s);
+    int current_node;
+    list<int>::iterator iter;
+    while (!q.empty()) {
+        current_node = q.front();
+        q.pop();
+        for (iter = g.adj_list[current_node].begin(); iter != g.adj_list[current_node].end(); ++iter) {
+            if (*iter < 0) continue;
+            if (color[*iter] == 0) {
+                color[*iter] = 1;
+                q.push(*iter);
+                unionset(nodes[current_node], nodes[*iter], -1);
+            }
+        }
+        color[current_node] = 2;
     }
 }

@@ -109,7 +109,6 @@ list<int *> graph::benchmark() {
             *jter = current_node;
         }
     }
-//    print_bridge(bridge);
     return bridge;
 }
 
@@ -117,10 +116,4 @@ void graph::destroy_bridge(list<int *> bridge) {
     list<int *>::iterator iter;
     for (iter = bridge.begin(); iter != bridge.end(); ++iter)
         delete[] *iter;
-}
-
-void graph::print_bridge(list<int *> bridge) {
-    list<int *>::iterator iter;
-    for (iter = bridge.begin(); iter != bridge.end(); ++iter)
-        cout << (*iter)[0] << ' ' << (*iter)[1] << '\n';
 }
