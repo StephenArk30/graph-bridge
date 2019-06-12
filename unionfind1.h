@@ -2,8 +2,8 @@
 // Created by Stephen Ark on 5/31/2019.
 //
 
-#ifndef GRAPH_BRIDGE_UNIONFIND_H
-#define GRAPH_BRIDGE_UNIONFIND_H
+#ifndef GRAPH_BRIDGE_UNIONFIND1_H
+#define GRAPH_BRIDGE_UNIONFIND1_H
 
 #include <list>
 #include "graph.h"
@@ -24,7 +24,7 @@ struct set {
     node *tail;
 };
 
-class unionfind {
+class unionfind1 {
 private:
     list<set *> sets;
     node **nodes;
@@ -37,10 +37,11 @@ private:
 
     void makeset(node *x);
 
-    void bfsunion(graph &g, int s, int *color);
+    void bfsunion(graph &g, int s, int *color, int d);
 public:
-    explicit unionfind(const string &file_path);
-    ~unionfind();
+    explicit unionfind1(const string &file_path);
+
+    ~unionfind1();
 
     node *makeset(int x);
     set* findset(node *x);
@@ -50,7 +51,9 @@ public:
     void benchmark(graph &g); // 暴力算法
 
     int getsetnum() { return setnum; }
+
+    void printBridge();
 };
 
 
-#endif //GRAPH_BRIDGE_UNIONFIND_H
+#endif //GRAPH_BRIDGE_UNIONFIND1_H

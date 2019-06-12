@@ -5,19 +5,19 @@
 #include <fstream>
 #include <cstring>
 #include <queue>
-#include "unionfind.h"
+#include <iostream>
+#include "unionfind1.h"
 
-unionfind::unionfind(const string &file_path) : setnum(0) {
-    sets.clear();
-    nodes = new node *[v_num];
-    is_bridge = new bool[e_num];
-    memset(is_bridge, true, sizeof(bool) * e_num);
-    bridge_num = 0;
-
+unionfind1::unionfind1(const string &file_path) : setnum(0) {
     ifstream file;
     file.open(file_path);
     v_num = e_num = 0;
     file >> v_num >> e_num;
+
+    sets.clear();
+    nodes = new node *[v_num];
+    is_bridge = new bool[e_num];
+    bridge_num = 0;
     edge = new node **[e_num];
     int i, j, k;
     for (i = 0; i < e_num; ++i) {
@@ -36,7 +36,7 @@ unionfind::unionfind(const string &file_path) : setnum(0) {
             if (unionset(edge[i][0], edge[i][1], i)) setnum--;
 }
 
-node *unionfind::makeset(int x) {
+node *unionfind1::makeset(int x) {
     node *temp_node = new node{
         x, nullptr, nullptr
     };
@@ -49,11 +49,11 @@ node *unionfind::makeset(int x) {
 }
 
 
-set *unionfind::findset(node *x) {
+set *unionfind1::findset(node *x) {
     return x->head;
 }
 
-bool unionfind::unionset(node *x, node *y, int e) {
+bool unionfind1::unionset(node *x, node *y, int e) {
     set *set1 = findset(x);
     set *set2 = findset(y);
     if (set1 == nullptr || set2 == nullptr)
@@ -71,7 +71,7 @@ bool unionfind::unionset(node *x, node *y, int e) {
     return true;
 }
 
-unionfind::~unionfind() {
+unionfind1::~unionfind1() {
     list<set *>::iterator iter;
     for (iter = sets.begin(); iter != sets.end(); iter++) {
         node *nd, *next = nullptr;
@@ -83,7 +83,8 @@ unionfind::~unionfind() {
     }
 }
 
-void unionfind::benchmark(graph &g) {
+void unionfind1::benchmark(graph &g) {
+    memset(is_bridge, true, sizeof(bool) * e_num);
     node *p;
     node *node1, *node2;
     for (int i = 0; i < e_num; ++i) {
@@ -96,12 +97,13 @@ void unionfind::benchmark(graph &g) {
             makeset(p);
             color[p->data] = 0;
         }
-        bfsunion(g, node1->data, color);
-        if (findset(node1) == findset(node2)) is_bridge[i] = true;
+        bfsunion(g, node1->data, color, node2->data);
+        if (findset(node1) == findset(node2)) is_bridge[i] = false;
+        delete[] color;
     }
 }
 
-void unionfind::makeset(node *x) {
+void unionfind1::makeset(node *x) {
     set *temp_set = new set{
             x, x
     };
@@ -109,7 +111,7 @@ void unionfind::makeset(node *x) {
     sets.push_back(temp_set);
 }
 
-void unionfind::bfsunion(graph &g, int s, int *color) {
+void unionfind1::bfsunion(graph &g, int s, int *color, int d) {
     queue<int> q;
     q.push(s);
     int current_node;
@@ -118,7 +120,7 @@ void unionfind::bfsunion(graph &g, int s, int *color) {
         current_node = q.front();
         q.pop();
         for (iter = g.adj_list[current_node].begin(); iter != g.adj_list[current_node].end(); ++iter) {
-            if (*iter < 0) continue;
+            if (*iter == d) continue; // the edge deleted
             if (color[*iter] == 0) {
                 color[*iter] = 1;
                 q.push(*iter);
@@ -127,4 +129,9 @@ void unionfind::bfsunion(graph &g, int s, int *color) {
         }
         color[current_node] = 2;
     }
+}
+
+void unionfind1::printBridge() {
+    for (int i = 0; i < e_num; ++i)
+        if (is_bridge[i]) cout << edge[i][0] << ' ' << edge[i][1] << '\n';
 }

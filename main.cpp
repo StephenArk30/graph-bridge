@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "graph.h"
-#include "unionfind.h"
+#include "unionfind1.h"
+#include "unionfind2.h"
 
 using namespace std;
 
@@ -13,6 +14,12 @@ int main() {
     cout << "adjacency list created\n";
     list<int *> mbridge = mg.benchmark();
     mg.destroy_bridge(mbridge);
+
+    unionfind1 uf1(mediumG);
+    uf1.benchmark(mg);
+    uf1.printBridge();
+
+    unionfind2 uf2(mediumG);
 
     /*string largeG = "../test_data/largeG.txt";
     cout << "reading graph from " << largeG << '\n';
