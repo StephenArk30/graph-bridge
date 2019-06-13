@@ -9,7 +9,7 @@
 
 using namespace std;
 
-struct node2 {
+struct node {
     int father;
     int head;
     int level; // level == -1 not in tree
@@ -17,20 +17,21 @@ struct node2 {
     int next;
 };
 
-struct edge2 {
+struct edge {
     int node1, node2;
 };
 
-struct set2 {
+struct set {
     int head;
     int tail;
+    int size;
 };
 
-class unionfind2 {
+class unionfind {
 private:
-    node2 *nodes;
-    edge2 *edges;
-    set2 *sets;
+    node *nodes;
+    edge *edges;
+    set *sets;
     int v_num;
     int e_num;
     bool *is_bridge;
@@ -42,9 +43,11 @@ private:
     void find_lca(int node1, int node2);
 
 public:
-    explicit unionfind2(const string &file_path);
+    explicit unionfind(const string &file_path);
 
-    ~unionfind2();
+    unionfind(int vn, int en);
+
+    ~unionfind();
 
     void tarjan_lca();
 

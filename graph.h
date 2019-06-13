@@ -11,7 +11,6 @@
 using namespace std;
 
 class graph {
-    friend class unionfind1;
 private:
     list<int> *adj_list;
     int v_num, e_num;
