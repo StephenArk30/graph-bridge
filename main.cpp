@@ -13,6 +13,7 @@ int main() {
     cout << "reading graph from " << mediumG << '\n';
     graph mg(mediumG);
     cout << "adjacency list created\n";
+    cout << "bridges: \n";
     list<int *> mbridge = mg.benchmark();
     mg.destroy_bridge(mbridge);
 
@@ -22,17 +23,24 @@ int main() {
     uf1.printBridge();*/
 
     cout << "=====use union find tarjan lca=====\n";
-    unionfind2 uf2(mediumG);
-    uf2.tarjan_lca();
-    uf2.print_bridge();
+    unionfind2 uf2m(mediumG);
+    uf2m.tarjan_lca();
+    cout << "bridges: \n";
+    uf2m.print_bridge();
 
 
-    /*string largeG = "../test_data/largeG.txt";
+    cout << "\n=====LARGE=====\n";
+    string largeG = "../test_data/largeG.txt";
     cout << "reading graph from " << largeG << '\n';
-    graph lg(largeG);
+    /*graph lg(largeG);
     cout << "adjacency list created\n";
     list<int *> lbridge = lg.benchmark();
     lg.destroy_bridge(lbridge);*/
+    unionfind2 uf2l(largeG);
+    cout << "read graph complete\n";
+    uf2l.tarjan_lca();
+    uf2l.print_bridge();
+
 
     return 0;
 }

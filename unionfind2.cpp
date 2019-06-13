@@ -35,6 +35,7 @@ unionfind2::unionfind2(const string &file_path) {
 void unionfind2::tarjan_lca() {
     memset(is_bridge, true, sizeof(bool) * e_num);
     for (int i = 0; i < e_num; ++i) {
+        if (i % 100000 == 0) cout << "edge " << i << " solved\n";
         int node1 = edges[i].node1;
         int node2 = edges[i].node2;
         if (node1 == node2) { // this is a self loop
@@ -50,7 +51,7 @@ void unionfind2::tarjan_lca() {
                 is_bridge[i] = false;
                 find_lca(node1, node2);
             } else {
-                union_set(node1, node2);
+                union_set(node1, node2, i);
             }
         } else if (nodes[node1].level < 0) {
             union_node(node2, node1, i);
@@ -60,7 +61,7 @@ void unionfind2::tarjan_lca() {
     }
 }
 
-void unionfind2::union_set(int node1, int node2) {
+void unionfind2::union_set(int node1, int node2, int e) {
     int temp = nodes[node2].head;
     // reverse father
     int p, i;
@@ -71,12 +72,15 @@ void unionfind2::union_set(int node1, int node2) {
         nodes[i].father = q;
         nodes[i].head = nodes[node1].head;
         nodes[i].level = nodes[q].level + 1;
+        q = nodes[i].e;
+        nodes[i].e = e;
+        e = q;
         q = i;
         i = p;
     }
-    nodes[sets[nodes[node1].head].tail].next = sets[nodes[node2].head].head;
-    sets[nodes[node1].head].tail = sets[nodes[node2].head].tail;
-    for (i = node2; i != -1; i = nodes[i].next) {
+    nodes[sets[nodes[node1].head].tail].next = sets[temp].head;
+    sets[nodes[node1].head].tail = sets[temp].tail;
+    for (i = sets[temp].head; i != -1; i = nodes[i].next) {
         q = 0;
         for (p = i; nodes[p].head != nodes[node1].head; p = nodes[p].father) ++q;
         nodes[i].level = nodes[p].level + q;
@@ -104,7 +108,8 @@ void unionfind2::find_lca(int node1, int node2) {
     int q = node2;
     int temp;
     while (p != q) {
-        is_bridge[nodes[p].e] = is_bridge[nodes[q].e] = false;
+        if (nodes[p].e >= 0) is_bridge[nodes[p].e] = false;
+        if (nodes[q].e >= 0) is_bridge[nodes[q].e] = false;
         if (nodes[p].level >= nodes[q].level) {
             temp = p;
             p = nodes[p].father;
@@ -113,7 +118,8 @@ void unionfind2::find_lca(int node1, int node2) {
             q = nodes[q].father;
         }
         if (temp != sets[nodes[temp].head].head) {
-            nodes[temp].father = nodes[temp].head;
+            nodes[temp].father = sets[nodes[temp].head].head;
+            nodes[temp].e = -1;
         }
     }
 }

@@ -35,7 +35,7 @@ private:
     int e_num;
     bool *is_bridge;
 
-    void union_set(int node1, int node2);
+    void union_set(int node1, int node2, int e);
 
     void union_node(int node1, int node2, int e);
 
