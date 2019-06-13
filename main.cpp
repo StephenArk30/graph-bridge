@@ -3,10 +3,13 @@
 #include "graph.h"
 #include "unionfind1.h"
 #include "unionfind2.h"
+#include <time.h>
 
 using namespace std;
 
 int main() {
+    clock_t startTime, endTime;
+
     string mediumG = "../test_data/mediumDG.txt";
 
     cout << "=====use benchmark=====\n";
@@ -14,7 +17,10 @@ int main() {
     graph mg(mediumG);
     cout << "adjacency list created\n";
     cout << "bridges: \n";
+    startTime = clock();
     list<int *> mbridge = mg.benchmark();
+    endTime = clock();
+    cout << "time spent: " << (double) (endTime - startTime) << "ms\n";
     mg.destroy_bridge(mbridge);
 
     /*cout << "=====use union find force find=====\n";
@@ -24,7 +30,10 @@ int main() {
 
     cout << "=====use union find tarjan lca=====\n";
     unionfind2 uf2m(mediumG);
+    startTime = clock();
     uf2m.tarjan_lca();
+    endTime = clock();
+    cout << "time spent: " << (double) (endTime - startTime) << "ms\n";
     cout << "bridges: \n";
     uf2m.print_bridge();
 
@@ -38,7 +47,10 @@ int main() {
     lg.destroy_bridge(lbridge);*/
     unionfind2 uf2l(largeG);
     cout << "read graph complete\n";
+    startTime = clock();
     uf2l.tarjan_lca();
+    endTime = clock();
+    cout << "time spent: " << (double) (endTime - startTime) << "ms\n";
     uf2l.print_bridge();
 
 

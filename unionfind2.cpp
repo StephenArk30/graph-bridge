@@ -35,7 +35,7 @@ unionfind2::unionfind2(const string &file_path) {
 void unionfind2::tarjan_lca() {
     memset(is_bridge, true, sizeof(bool) * e_num);
     for (int i = 0; i < e_num; ++i) {
-        if (i % 100000 == 0) cout << "edge " << i << " solved\n";
+//        if (i % 100000 == 0) cout << "edge " << i << " solved\n";
         int node1 = edges[i].node1;
         int node2 = edges[i].node2;
         if (node1 == node2) { // this is a self loop
